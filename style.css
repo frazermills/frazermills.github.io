@@ -1,0 +1,171 @@
+/* --- Root Variables for Colors & Fonts --- */
+:root {
+    --bg-color: #f6f1e6;
+    --card-bg-color: #ffffff;
+    --text-color-primary: #2e3d48;
+    --text-color-secondary: #5f7a77;
+    --divider-color: #e6b8a2;
+    --shadow-color: rgba(0, 0, 0, 0.07);
+
+    /* Icon Specific Colors */
+    --linkedin-color: #0077B5;
+    --github-color: #181717;
+    --cv-color: #d9534f;
+
+    --font-serif: 'Playfair Display', serif;
+    --font-sans-serif: 'Source Sans 3', sans-serif;
+}
+
+/* --- Basic Setup --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-sans-serif);
+    background-color: var(--bg-color);
+    color: var(--text-color-primary);
+    line-height: 1.6;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* --- The Main White Card --- */
+.card {
+    background-color: var(--card-bg-color);
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* --- Profile Photo --- */
+.profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 25px auto; /* Centered with space below */
+    border: 3px solid #eee;
+}
+
+/* --- Typography & Elements --- */
+.subtitle {
+    font-weight: 400;
+    font-size: 1.1rem;
+    color: var(--text-color-secondary);
+    margin-bottom: 15px;
+}
+
+.name {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-color-primary);
+    margin-bottom: 20px;
+}
+
+.divider {
+    border: 0;
+    height: 2px;
+    background-color: var(--divider-color);
+    width: 60px;
+    margin: 0 auto 30px auto;
+}
+
+.status {
+    font-weight: 300;
+    font-size: 1rem;
+    color: var(--text-color-secondary);
+    margin-bottom: 40px;
+}
+
+/* --- Contact & Social Footer --- */
+.contact-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.contact-button {
+    background-color: transparent;
+    border: 1px solid #d4d4d4;
+    color: var(--text-color-primary);
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contact-button:hover {
+    background-color: #f8f8f8;
+    border-color: var(--text-color-primary);
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    color: #ffffff;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3rem;
+    text-decoration: none;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.social-links a:hover {
+    transform: translateY(-3px);
+    opacity: 0.85;
+}
+
+/* Individual Icon Colors */
+.social-links .linkedin { background-color: var(--linkedin-color); }
+.social-links .github { background-color: var(--github-color); }
+.social-links .cv { background-color: var(--cv-color); }
+
+/* --- Animation --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 600px) {
+    .card {
+        padding: 30px 25px;
+    }
+    .profile-photo {
+        width: 120px;
+        height: 120px;
+    }
+    .name {
+        font-size: 2.5rem;
+    }
+    .contact-footer {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
