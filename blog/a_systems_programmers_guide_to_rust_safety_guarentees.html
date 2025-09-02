@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A blog post by Frazer Mills on Rust's safety and performance features.">
+
+    <title>A System's Programmers Guide to Rust Safety Guarantees | Frazer Mills</title>
+
+    <!-- Reusing the same fonts and icons from your main page -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Link to your existing stylesheet -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Additional styles for the blog post layout -->
+    <style>
+        /* Widen the card for better readability of long text */
+        .card {
+            max-width: 800px;
+            text-align: left; /* Override the center alignment for the article */
+        }
+
+        .blog-header {
+            text-align: center; /* Center the title and metadata */
+            margin-bottom: 40px;
+        }
+
+        .blog-post-title {
+            font-family: var(--font-serif);
+            font-size: 2.8rem;
+            color: var(--text-color-primary);
+            margin-bottom: 10px;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-color-secondary);
+        }
+
+        .blog-content p, .blog-content li {
+            margin-bottom: 1.5em;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .blog-content h3 {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            margin-top: 2em;
+            margin-bottom: 1em;
+            color: var(--text-color-primary);
+        }
+
+        .blog-content ul {
+            list-style-position: outside;
+            padding-left: 20px;
+            margin-bottom: 1.5em;
+        }
+
+        /* Styling for code blocks */
+        .blog-content pre {
+            background-color: #fbfbfa;
+            border: 1px solid #efefef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto; /* For horizontal scrolling of long code */
+            margin: 2em 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .blog-content code {
+            font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+            font-size: 0.95rem;
+            color: #2e3d48;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            color: var(--text-color-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-color-primary);
+        }
+
+        /* Responsive adjustments for the blog post */
+        @media (max-width: 600px) {
+            .blog-post-title {
+                font-size: 2.2rem;
+            }
+            .blog-content p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="card">
+        <!-- A simple link to navigate back to your homepage -->
+        <a href="../index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Home</span>
+        </a>
+
+        <article>
+            <header class="blog-header">
+                <h1 class="blog-post-title">A System's Programmers Guide to Rust Safety Guarantees</h1>
+                <p class="post-meta">Published on September 2, 2025 by Frazer Mills</p>
+                <!-- This divider is reused from your existing style.css -->
+                <hr class="divider">
+            </header>
+
+            <div class="blog-content">
+                <p>
+                    Rust's most famous features are the safety guarantees it provides at compile time. These features allow developers to write high-performance systems software with a degree of confidence that was previously difficult to achieve. In this post, I will break down the three core concepts I found most impactful while building a recent project: Memory Safety, Fearless Concurrency, and Zero-Cost Abstractions.
+                </p>
+
+                <h3>Memory Safety</h3>
+                <p>
+                    Firstly, Rust guaranteeing memory safety means that you just don’t get those classic types of bugs.
+                </p>
+                <ul>
+                    <li>You can’t index past the end of an array by accident and if you try, it will panic or be caught in testing and in optimised builds the bounds check often get optimised away when provable.</li>
+                    <li>You can’t use a pointer after freeing memory, Rust just won’t compile code that even potentially could do that. It’s strict and if you free an object (Rust actually frees it automatically when it goes out of scope), any reference to it becomes invalid at compile time.</li>
+                    <li>Null pointers? There’s no such thing in safe Rust. You have to use ‘Option’ and the compiler forces you to check “is it Some or None” before using it.</li>
+                </ul>
+                <p>
+                    These rules are enforced by Rust’s borrow checker and ownership system. This is really great because if there’s any ambiguity about access or lifetimes then the code will never build. This is really useful because then if it compiles, you’ve basically proven the absence of those memory bugs. The result of this is: no buffer overruns, no reads of uninitialized memory, etc in production.
+                </p>
+
+                <h3>“Fearless” Concurrency</h3>
+                <p>
+                    Secondly, Rust guarantees thread safety in a novel way. Unlike other languages like Java or C# where you can still forget a lock and get a race condition, the Rust compiler checks thread usage. For a value to be shared across threads, it must be implement a Sync marker trait (meaning it’s safe for simultaneous reference) or you have to wrap it in something like a Mutex. If you try to circumvent that (e.g. share a &mut reference between threads), your code won’t compile. This is huge because it means data races are eliminated at compile time. Rust not only gives you memory safety but also what’s known as “fearless concurrency”, meaning you can write multi-threaded code and be confident the typical concurrency bugs (like two threads overwriting the same variable) can’t happen in safe Rust.
+                </p>
+
+                <h3>Zero-Cost Abstractions</h3>
+                <p>
+                    Finally, all these safety benefits come without a garbage collector. Unlike Java or C#, Rust doesn’t have to periodically stop and clean up memory; it compiles down to code which is as efficient as C/C++. A brilliant aspect of Rust for me is the idea of zero-cost abstractions, meaning you can use high-level constructs (iterators, etc) and the compiler translates them into very efficient machine code with no extra overhead. Memory is managed through deterministic release (like C++ destructors on scope exit), so performance is predictable and real-time friendly.
+                </p>
+
+                <h3>Conclusion</h3>
+                <p>
+                    These features combined are what allow developers to build highly reliable, performant software. They represent a fundamental step forward in systems programming. To read more about what I did with Rust at Microsoft <a href="https://www.linkedin.com/pulse/how-why-i-built-low-latency-event-processing-system-rust-frazer-mills-cclje/" target="_blank">read my LinkedIn Article!</a>
+
+                </p>
+            </div>
+        </article>
+    </main>
+
+</body>
+</html>
+
